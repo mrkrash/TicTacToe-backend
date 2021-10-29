@@ -34,4 +34,5 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test
+    - name: Run static test suite
       run: composer run-script test:static
