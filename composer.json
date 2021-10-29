@@ -22,6 +22,10 @@
             "src/_functions.php"
         ]
     },
+    "scripts": {
+        "test": "vendor/bin/phpunit tests",
+        "test:static": "vendor/bin/phpstan analyse -l 4 src tests"
+    },
     "authors": [
         {
             "name": "Mario Ravalli",
