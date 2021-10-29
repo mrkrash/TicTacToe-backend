@@ -10,35 +10,35 @@ use Ramsey\Uuid\Uuid;
 
 class GameMatch implements JsonSerializable
 {
-    private $player1 = "1";
-    private $player2 = "2";
+    const INVALID_MOVE = 'Invalid Move';
+    const NOT_YOUR_TURN = 'Not your turn';
+    const PLAYER_UNKNOWN = 'Player Unknown';
+
+    private string $player1 = "1";
+    private string $player2 = "2";
+    private string $uuid = '';
 
     /**
+     * Player thath have moved
      * @var String
      */
-    private $uuid;
+    private ?string $last_player = null;
 
     /**
-     * @var Array
+     * @var array<string, array>
      */
-    private $table = [
+    private array $table = [
         'T' => ['', '', ''],
         'C' => ['', '', ''],
         'D' => ['', '', ''],
     ];
 
     /**
-     * Player thath have moved
-     * @var String
+     * @var array<string, string>
      */
-    private $last_player;
-
-    /**
-     * @var Array
-     */
-    private $status = [
-        'message' => null,
-        'winner' => null,
+    private array $status = [
+        'message' => '',
+        'winner' => '',
     ];
     
     public function __construct()
@@ -56,6 +56,9 @@ class GameMatch implements JsonSerializable
         return $this->status['message'];
     }
 
+    /**
+     * @return array<string, array>
+     */
     public function getTable(): array
     {
         return $this->table;
@@ -78,13 +81,13 @@ class GameMatch implements JsonSerializable
     {
         return [
             'uuid' => $this->uuid,
-            'match' => $this->match,
-            'player' => $this->player,
+            'status' => $this->status,
+            'player' => $this->last_player,
             'table' => $this->table,
         ];
     }
 
-    public function playerMove(string $player, string $move)
+    public function playerMove(string $player, string $move): void
     {
         $row = substr($move, 0, 1);
         $col = (int) substr($move, 1, 1);
@@ -93,7 +96,7 @@ class GameMatch implements JsonSerializable
             $this->isPlayerTurn($player) &&
             $this->isMoveValid($row, $col)
         ) {
-            $this->status['message'] == null;
+            $this->status['message'] == '';
             $this->table[$row][$col] = $player;
             $this->last_player = $player;
             $this->isWinner($player);
@@ -108,7 +111,7 @@ class GameMatch implements JsonSerializable
         ) {
             return true;
         }
-        $this->status['message'] = 'Invalid Move';
+        $this->status['message'] = self::INVALID_MOVE;
         return false;
     }
 
@@ -135,7 +138,7 @@ class GameMatch implements JsonSerializable
         if ($this->last_player !== $player) {
             return true;
         }
-        $this->status['message'] = 'it\'s not your turn';
+        $this->status['message'] = self::NOT_YOUR_TURN;
         return false;
     }
 
@@ -144,7 +147,7 @@ class GameMatch implements JsonSerializable
         if ($player === $this->player1 || $player === $this->player2) {
             return true;
         }
-        $this->status['message'] = 'Player Unknown';
+        $this->status['message'] = self::PLAYER_UNKNOWN;
         return false;
     }
 }

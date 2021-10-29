@@ -49,7 +49,7 @@ class Wellcome
             ], 406);
         }
         $match = unserialize($_SESSION['matchs'][$params['uuid']]);
-        if (!is_null($match->getWinner())) {
+        if (!empty($match->getWinner())) {
             return new JsonResponse([
                 'reason_phrase' => "This match has ended. Player {$match->getWinner()} has win!!",
                 'status_code' => 406,
